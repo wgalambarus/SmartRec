@@ -3,8 +3,8 @@
 ## ⚙️ Langkah Instalasi
 ###  Clone Repository
 ```bash
-git clone https://github.com/username/smart-recruitment.git
-cd smart-recruitment
+git clone https://github.com/wgalambarus/SmartRec/.git
+cd folder-projek
 ```
 ### Setting Virtual Environment
 ```bash
