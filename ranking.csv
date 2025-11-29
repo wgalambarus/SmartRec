@@ -1,0 +1,3 @@
+file,name,email,phone,age,education,years_exp,skills,score,breakdown
+cv.pdf,Wan Guntar Alam Barus,wanguntaralambarus@gmail.com,+62-82360972369,,S1,4,java;javascript;leadership;machine learning;python;react;sql,17.604,"{""education"": 8, ""years"": 6.0, ""skill_points"": 0, ""skill_matches"": 0, ""semantic_max"": 0.072, ""semantic_avg"": 0.072, ""semantic_points"": 3.604, ""age_points"": 0, ""raw_score"": 17.604}"
+cv.pdf,Wan Guntar Alam Barus,wanguntaralambarus@gmail.com,+62-82360972369,,S1,4,java;javascript;leadership;machine learning;python;react;sql,17.604,"{""education"": 8, ""years"": 6.0, ""skill_points"": 0, ""skill_matches"": 0, ""semantic_max"": 0.072, ""semantic_avg"": 0.072, ""semantic_points"": 3.604, ""age_points"": 0, ""raw_score"": 17.604}"

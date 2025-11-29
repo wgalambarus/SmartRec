@@ -1,17 +1,3 @@
-"""
-smart_recruiter.py
-Single-file pipeline:
-- ekstrak teks dari PDF / DOCX (opsional OCR)
-- ekstrak fitur dasar (email, phone, education, years)
-- ambil pengalaman sections (heuristic)
-- compute semantic similarity antara pengalaman dan job description (sentence-transformers)
-- scoring rule-based + semantic relevance
-- ranking dan simpan hasil ke CSV/JSON
-
-Usage:
-python smart_recruiter.py --cv_folder ./cvs --job_desc "Data Scientist with ML & Python experience" --out results.csv
-"""
-
 import os
 import re
 import json
@@ -19,28 +5,18 @@ import argparse
 from datetime import datetime
 from glob import glob
 from collections import defaultdict
-
-# file reading
 import docx2txt
-import fitz  # PyMuPDF
+import fitz
 
-# optional OCR
 try:
     import pytesseract
     from PIL import Image
     OCR_AVAILABLE = True
 except Exception:
     OCR_AVAILABLE = False
-
-# embeddings
 from sentence_transformers import SentenceTransformer, util
-
-# Data output
 import pandas as pd
 
-# -----------------------
-# Utilities: Text Extraction
-# -----------------------
 def extract_text_from_pdf(path, try_ocr_if_empty=False):
     text = ""
     with fitz.open(path) as doc:
@@ -48,7 +24,6 @@ def extract_text_from_pdf(path, try_ocr_if_empty=False):
             text += page.get_text("text") + "\n"
     text = text.strip()
     if not text and try_ocr_if_empty and OCR_AVAILABLE:
-        # fallback to OCR each page as image
         imgs = []
         with fitz.open(path) as doc:
             for page in doc:
@@ -73,25 +48,20 @@ def extract_text(path, try_ocr_if_empty=False):
     else:
         raise ValueError("Unsupported file format: " + path)
 
-# -----------------------
-# Basic regex extractors
-# -----------------------
 def extract_email(text):
     m = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', text)
     return m[0] if m else None
 
 def extract_phone(text):
-    # common phone patterns, rough
     m = re.findall(r'(\+?\d[\d\s\-\(\)]{6,}\d)', text)
     if m:
-        # return most likely (longest)
         return max(m, key=len)
     return None
 
 def extract_dob_and_age(text):
     patterns = [
-        r'(\d{1,2}[\/\-\s]\d{1,2}[\/\-\s]\d{2,4})',  # dd/mm/yyyy or dd-mm-yyyy
-        r'(\d{4}[\/\-\s]\d{1,2}[\/\-\s]\d{1,2})',    # yyyy-mm-dd
+        r'(\d{1,2}[\/\-\s]\d{1,2}[\/\-\s]\d{2,4})',
+        r'(\d{4}[\/\-\s]\d{1,2}[\/\-\s]\d{1,2})', 
         r'Date of Birth[:\s\-]*([A-Za-z0-9 ,\-\/]+)'
     ]
     for p in patterns:
@@ -122,26 +92,19 @@ def extract_education_level(text):
     return "Unknown"
 
 def extract_years_experience(text):
-    # heuristic: find years like 2016, 2020 etc and compute span
     years = re.findall(r'(20[0-3]\d|19[7-9]\d)', text)
     years = sorted({int(y) for y in years})
     if len(years) >= 2:
         span = years[-1] - years[0]
         if 0 <= span <= 60:
             return span
-    # fallback: find durations like "X years"
     m = re.search(r'(\d{1,2})\s+years?', text, re.IGNORECASE)
     if m:
         return int(m.group(1))
     return None
 
-# -----------------------
-# Experience and skills extraction (heuristic)
-# -----------------------
 def extract_experience_sections(text):
-    # naive: split by common headings
     headings = ['experience', 'work experience', 'employment history', 'professional experience', 'experience:', 'work history']
-    # split lines and find lines with headings
     lines = text.splitlines()
     text_lower = text.lower()
     start_idx = None
@@ -150,11 +113,9 @@ def extract_experience_sections(text):
             start_idx = i
             break
     if start_idx is None:
-        # fallback: try to capture paragraphs that contain years or job-like words
         paras = [p.strip() for p in re.split(r'\n{2,}', text) if p.strip()]
         candidates = [p for p in paras if re.search(r'(engineer|developer|analyst|manager|worked|experience|intern)', p, re.IGNORECASE)]
-        return candidates[:5]  # limited number
-    # capture next few lines as experience block
+        return candidates[:5]
     block = "\n".join(lines[start_idx:start_idx+40])
     # split by bullet or linebreaks into entries
     entries = [e.strip() for e in re.split(r'[\n•\-•\u2022]+', block) if e.strip()]
@@ -185,10 +146,8 @@ def load_embedding_model(name="all-MiniLM-L6-v2"):
     return EMBED_MODEL
 
 def semantic_similarity_score(text_chunks, job_desc, model):
-    # text_chunks: list of strings (candidate experience entries)
     if not text_chunks:
-        return 0.0, 0.0  # (max_sim, avg_sim)
-    # encode all
+        return 0.0, 0.0
     emb_job = model.encode(job_desc, convert_to_tensor=True)
     emb_exp = model.encode(text_chunks, convert_to_tensor=True)
     sims = util.cos_sim(emb_exp, emb_job)  # shape (n,1)
@@ -232,7 +191,6 @@ def score_candidate(parsed, job_desc, model, weights=None):
     score += years_points
     breakdown['years'] = years_points
 
-    # skills: overlap with job description keywords (also treat as positive)
     skills = parsed.get("skills", [])
     jd_lower = job_desc.lower()
     matched = 0
@@ -255,7 +213,6 @@ def score_candidate(parsed, job_desc, model, weights=None):
     breakdown['semantic_avg'] = round(avg_sim,3)
     breakdown['semantic_points'] = round(sim_points,3)
 
-    # age bonus (optional): prefer mid-career 22..40
     age = parsed.get("age")
     age_points = 0
     if isinstance(age, int) and 22 <= age <= 40:
