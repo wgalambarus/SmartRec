@@ -135,9 +135,7 @@ def extract_skills_keyword(text, skill_list=None):
             found.add(s)
     return sorted(found)
 
-# -----------------------
-# Semantic model (sentence-transformers)
-# -----------------------
+
 EMBED_MODEL = None
 def load_embedding_model(name="all-MiniLM-L6-v2"):
     global EMBED_MODEL
@@ -156,9 +154,7 @@ def semantic_similarity_score(text_chunks, job_desc, model):
     avg_sim = float(sims.mean())
     return max_sim, avg_sim
 
-# -----------------------
-# Scoring logic (rule-based with semantic)
-# -----------------------
+
 def score_candidate(parsed, job_desc, model, weights=None):
     """
     parsed: dict with keys: 'text', 'email', 'phone', 'dob','age','education','years_exp','skills','experience_entries'
@@ -224,9 +220,7 @@ def score_candidate(parsed, job_desc, model, weights=None):
     breakdown['raw_score'] = round(score,3)
     return score, breakdown
 
-# -----------------------
-# High level per-CV parse function
-# -----------------------
+
 def parse_cv_file(path, try_ocr=False, embed_model=None):
     txt = extract_text(path, try_ocr_if_empty=try_ocr)
     txt = txt.replace('\r','\n')
@@ -250,9 +244,6 @@ def parse_cv_file(path, try_ocr=False, embed_model=None):
     parsed['name'] = name or "Unknown"
     return parsed
 
-# -----------------------
-# Process folder and rank
-# -----------------------
 def process_and_rank(cv_folder, job_desc, try_ocr=False, out_csv=None, out_json=None):
     paths = []
     for ext in ("pdf","docx","DOCX","PDF"):
@@ -292,9 +283,6 @@ def process_and_rank(cv_folder, job_desc, try_ocr=False, out_csv=None, out_json=
             json.dump(results_sorted, f, ensure_ascii=False, indent=2)
     return results_sorted
 
-# -----------------------
-# CLI
-# -----------------------
 def main():
     parser = argparse.ArgumentParser(description="Smart Recruitment: CV ranking by semantic relevance")
     parser.add_argument("--cv_folder", required=True, help="Folder containing CVs (.pdf, .docx)")
@@ -309,7 +297,7 @@ def main():
     print("Processing CVs in:", args.cv_folder)
     results = process_and_rank(args.cv_folder, args.job_desc, try_ocr=args.ocr, out_csv=args.out, out_json=args.json)
     print("Done. Top candidates:")
-    for i, r in enumerate(results[:10], 1):
+    for i, r in enumerate(results[:40], 1):
         print(f"{i}. {r['name']}  ({r['file']})  score={r['score']}  skills={r['skills']}")
 
 if __name__ == "__main__":

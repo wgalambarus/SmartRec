@@ -1,13 +1,21 @@
-Tugas / Tanggung Jawab :
-• Melakukan pekerjaan yang berhubungan dengan bagian Staff IT Database Administrator
-• Menganalisa performance database server
-• Mengontrol proses malam dan maintanace server
-• Validasi query untuk perbaikan data
-• Validasi program yang dibuat DBA staf/spv
-• Analisa perbaikan data
-• Berdomisili di Medan
-Kualifikasi / Persyaratan :
-• Pria dan Wanita
-• Min D3-S1 jurusan Informatika/ Sistem Informasi/ Komputer Akuntansi/ Teknik Elektro.
-• Pengalaman dibidangnya minimal 2-3 tahun
-• Dapat bekerja dalam team system administrator
+Software Engineer with 8 years of experience across all phases of the SDLC, including requirements analysis, design, development, testing, and deployment for web and enterprise applications using Java/J2EE and OOP.
+
+Proficient in Agile, Waterfall, and Test-Driven Development, with strong expertise in building scalable applications using Spring (Core, MVC, Boot, Security, Batch, AOP, Data) and Microservices architecture.
+
+Skilled in modern front-end technologies such as HTML5, CSS3, jQuery, JSON, AJAX, AngularJS, Bootstrap, Node.js, and JSTL.
+
+Strong hands-on experience with Hibernate ORM, Java 8 features (Streams, Lambdas, Functional Interfaces), and enterprise integration patterns.
+
+Experienced in building REST & SOAP web services using JAX-RS, JAX-WS, JAXB, Jersey, Axis, and XML/XSLT technologies.
+
+Solid background in AWS cloud services including EC2, S3, RDS, CloudWatch, CloudFront, IAM, CloudFormation, ElastiCache, and messaging via SNS/SQS.
+
+Skilled in database development using SQL, PL/SQL, Hibernate, and NoSQL (MongoDB).
+
+Proficient with Gradle, Maven, Ant, Git, SVN, and deployment to servers such as Tomcat, WebLogic, WebSphere, GlassFish, and JBoss.
+
+Strong foundation in Core Java areas such as collections, multithreading, exception handling, event handling, generics, and JVM fundamentals.
+
+Experienced with unit testing using JUnit, Mockito, logging via Log4j, and scripting/deployment on UNIX/Linux environments.
+
+Effective communicator with strong analytical skills and the ability to work independently or collaboratively within cross-functional teams.
